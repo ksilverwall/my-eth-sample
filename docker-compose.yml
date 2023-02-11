@@ -1,0 +1,48 @@
+version: "3.9"
+
+services:
+  clef:
+    build: .
+    networks:
+      - ethereum
+    volumes:
+      - ./container/ethereum/keystore/:/root/.ethereum/keystore
+      - ./container/clef/:/root/.clef/
+    tty: true
+    command: clef --chainid 11155111 --nousb --suppress-bootwarn
+
+  geth:
+    build: .
+    networks:
+      - ethereum
+    depends_on: [clef]
+    volumes:
+      - ./container/ethereum:/root/.ethereum
+      - ./container/clef/:/root/.clef/
+      - ./container/geth/secrets/:/root/secrets/
+    command: geth --sepolia --authrpc.addr 0.0.0.0 --authrpc.vhosts * --authrpc.jwtsecret /root/secrets/jwtsecret --http --http.api eth,net --signer=/root/.clef/clef.ipc --http
+
+  lighthouse:
+    image: sigp/lighthouse:latest
+    networks:
+      - ethereum
+    volumes:
+      - ./container/lighthouse/:/root/.lighthouse/
+      - ./container/geth/secrets/:/root/secrets/
+    command: lighthouse --network sepolia beacon_node --execution-endpoint http://geth:8551 --execution-jwt /root/secrets/jwtsecret --checkpoint-sync-url https://beaconstate-sepolia.chainsafe.io
+ 
+  create-account:
+    build: .
+    networks:
+      - ethereum
+    ports:
+      - 8545:8545
+      - 30303:30303
+    volumes:
+      - ./container/ethereum/keystore/:/root/.ethereum/keystore
+    tty: true
+    command: clef newaccount --suppress-bootwarn
+    profiles:
+      - command
+networks:
+  ethereum:
