@@ -1,0 +1,83 @@
+version: '3'
+services:
+  #
+  # Servers
+  #
+ 
+  geth01:
+    build: images/ethereum
+    networks:
+      ethereum:
+        ipv4_address: ${NODE01_IP:?}
+    volumes:
+      - ./:/root
+    working_dir: /root
+    entrypoint: [
+      "geth",
+      "--networkid", "${NETWORK_ID:?}",
+      "--authrpc.port", "8551",
+    ]
+    command: [
+      "--datadir", ".tmp/node01",
+      "--nodekey", "./files/node01/nodekey",
+      # Unlock account
+      "--unlock", "0x6ce0ba981dd9b3bc259bbd868be14f957dbe6dcf",
+      "--password", "./files/node01/password_6ce0ba981dd9b3bc259bbd868be14f957dbe6dcf.txt",
+      # PoA signer
+      "--mine",
+      # Bootstrap Node Settings
+      "--port", "${NODE01_PORT:?}",
+      "-nat", "extip:${NODE01_IP:?}",
+    ]
+
+  geth02:
+    build: images/ethereum
+    networks:
+      ethereum:
+    volumes:
+      - ./:/root
+    working_dir: /root
+    entrypoint: [
+      "geth",
+      "--networkid", "${NETWORK_ID:?}",
+      "--authrpc.port", "8551",
+    ]
+    command: [
+      "--datadir", ".tmp/node02",
+      "--nodekey", "./files/node02/nodekey",
+      # Unlock account
+      "--unlock", "0xa2217dd10357c20ace9b1a7dd71625151cfcf386",
+      "--password", "./files/node02/password_a2217dd10357c20ace9b1a7dd71625151cfcf386.txt",
+      # Member Node Settings
+      "--bootnodes", "${NODE01_ID:?}",
+    ]
+
+  #
+  # Commands
+  #
+
+  create-genesis-json:
+    profiles: [command]
+    image: golang:1.20.1
+    volumes:
+      - ./app/:/app/
+    entrypoint: go run /app/create-genesis-json/main.go
+
+  geth:
+    profiles: [command]
+    build: images/ethereum
+    networks:
+      ethereum:
+    volumes:
+      - ./:/root
+      - ./.tmp/node02/.geth/:/data/node02
+    working_dir: /root
+    entrypoint: geth
+    command: attach .tmp/node01/geth.ipc
+ 
+networks:
+  ethereum:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.20.0.0/16
