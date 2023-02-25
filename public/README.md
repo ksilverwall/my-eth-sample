@@ -1,4 +1,4 @@
-Sample for ethereum's private block chain
+Sample for ethereum's public block chain
 --
 
 ## Step 1 : Create Accounts

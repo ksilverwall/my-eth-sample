@@ -6,8 +6,8 @@ services:
     networks:
       - ethereum
     volumes:
-      - ./container/ethereum/keystore/:/root/.ethereum/keystore
-      - ./container/clef/:/root/.clef/
+      - ./.container/ethereum/keystore/:/root/.ethereum/keystore
+      - ./.container/clef/:/root/.clef/
     tty: true
     command: clef --chainid 11155111 --nousb --suppress-bootwarn
 
@@ -17,9 +17,9 @@ services:
       - ethereum
     depends_on: [clef]
     volumes:
-      - ./container/ethereum:/root/.ethereum
-      - ./container/clef/:/root/.clef/
-      - ./container/geth/secrets/:/root/secrets/
+      - ./.container/ethereum:/root/.ethereum
+      - ./.container/clef/:/root/.clef/
+      - ./.container/geth/secrets/:/root/secrets/
     command: geth --sepolia --authrpc.addr 0.0.0.0 --authrpc.vhosts * --authrpc.jwtsecret /root/secrets/jwtsecret --http --http.api eth,net --signer=/root/.clef/clef.ipc --http
 
   lighthouse:
@@ -27,8 +27,8 @@ services:
     networks:
       - ethereum
     volumes:
-      - ./container/lighthouse/:/root/.lighthouse/
-      - ./container/geth/secrets/:/root/secrets/
+      - ./.container/lighthouse/:/root/.lighthouse/
+      - ./.container/geth/secrets/:/root/secrets/
     command: lighthouse --network sepolia beacon_node --execution-endpoint http://geth:8551 --execution-jwt /root/secrets/jwtsecret --checkpoint-sync-url https://beaconstate-sepolia.chainsafe.io
  
   create-account:
@@ -39,7 +39,7 @@ services:
       - 8545:8545
       - 30303:30303
     volumes:
-      - ./container/ethereum/keystore/:/root/.ethereum/keystore
+      - ./.container/ethereum/keystore/:/root/.ethereum/keystore
     tty: true
     command: clef newaccount --suppress-bootwarn
     profiles:
