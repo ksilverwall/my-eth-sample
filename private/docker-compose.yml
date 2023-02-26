@@ -9,6 +9,8 @@ services:
     networks:
       ethereum:
         ipv4_address: ${NODE01_IP:?}
+    ports:
+      - "8545:8545"
     volumes:
       - ./:/root
     working_dir: /root
@@ -18,6 +20,11 @@ services:
       "--authrpc.port", "8551",
     ]
     command: [
+      "--http",
+      "--http.addr", "0.0.0.0",
+      "--http.vhosts", "*",
+      "--allow-insecure-unlock",
+
       "--datadir", ".tmp/node01",
       "--nodekey", "./files/node01/nodekey",
       # Unlock account

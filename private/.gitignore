@@ -1,4 +1,4 @@
 /.container
 /.ethereum
 /.tmp
-/node_modules
+node_modules
