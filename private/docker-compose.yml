@@ -21,16 +21,16 @@ services:
     ]
     command: [
       "--http",
+      "--http.api", "eth,personal",
       "--http.addr", "0.0.0.0",
       "--http.vhosts", "*",
       "--allow-insecure-unlock",
 
       "--datadir", ".tmp/node01",
       "--nodekey", "./files/node01/nodekey",
-      # Unlock account
+      # PoA signer
       "--unlock", "0x6ce0ba981dd9b3bc259bbd868be14f957dbe6dcf",
       "--password", "./files/node01/password_6ce0ba981dd9b3bc259bbd868be14f957dbe6dcf.txt",
-      # PoA signer
       "--mine",
       # Bootstrap Node Settings
       "--port", "${NODE01_PORT:?}",
@@ -52,9 +52,6 @@ services:
     command: [
       "--datadir", ".tmp/node02",
       "--nodekey", "./files/node02/nodekey",
-      # Unlock account
-      "--unlock", "0xa2217dd10357c20ace9b1a7dd71625151cfcf386",
-      "--password", "./files/node02/password_a2217dd10357c20ace9b1a7dd71625151cfcf386.txt",
       # Member Node Settings
       "--bootnodes", "${NODE01_ID:?}",
     ]
