@@ -7,3 +7,8 @@ RUN apt-get update && apt-get -y install curl ssh git && apt-get clean
 
 RUN mkdir /opt/scripts
 COPY ./setup.sh /opt/scripts/setup.sh
+COPY ./boot.sh /boot.sh
+
+RUN chmod 700 /boot.sh
+
+ENTRYPOINT ["/boot.sh"]

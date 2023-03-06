@@ -13,20 +13,19 @@ services:
       - "8545:8545"
     volumes:
       - ./:/root
+    environment:
+      GENESIS_FILE: ./files/shared/genesis.json
+      DATA_DIR: .tmp/node01
     working_dir: /root
-    entrypoint: [
-      "geth",
+    command: [
       "--networkid", "${NETWORK_ID:?}",
       "--authrpc.port", "8551",
-    ]
-    command: [
+
       "--http",
       "--http.api", "eth,personal",
       "--http.addr", "0.0.0.0",
-      "--http.vhosts", "*",
       "--allow-insecure-unlock",
 
-      "--datadir", ".tmp/node01",
       "--nodekey", "./files/node01/nodekey",
       "--keystore", "./files/node01/keystore",
       # Miner unlocking
@@ -46,13 +45,14 @@ services:
       ethereum:
     volumes:
       - ./:/root
+    environment:
+      GENESIS_FILE: ./files/shared/genesis.json
+      DATA_DIR: .tmp/node02
     working_dir: /root
-    entrypoint: [
-      "geth",
+    command: [
       "--networkid", "${NETWORK_ID:?}",
       "--authrpc.port", "8551",
-    ]
-    command: [
+
       "--datadir", ".tmp/node02",
       "--nodekey", "./files/node02/nodekey",
       "--keystore", "./files/node02/keystore",
@@ -63,18 +63,6 @@ services:
   #
   # Commands
   #
-  init:
-    profiles: [command]
-    build: ./images/ethereum
-    networks:
-      ethereum:
-    volumes:
-      - ./files:/root/files
-      - ./.tmp:/root/.tmp
-    environment:
-      FILE: ./files/shared/genesis.json
-    working_dir: /root
-    command: /opt/scripts/setup.sh .tmp/node01 .tmp/node02
 
   create-genesis-json:
     profiles: [command]
