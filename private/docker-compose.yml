@@ -29,9 +29,10 @@ services:
       "--datadir", ".tmp/node01",
       "--nodekey", "./files/node01/nodekey",
       "--keystore", "./files/node01/keystore",
-      # PoA signer
+      # Miner unlocking
       "--unlock", "0x6ce0ba981dd9b3bc259bbd868be14f957dbe6dcf",
       "--password", "./files/node01/password_6ce0ba981dd9b3bc259bbd868be14f957dbe6dcf.txt",
+      # Mining (PoA)
       "--mine",
       "--miner.etherbase", "0x6ce0ba981dd9b3bc259bbd868be14f957dbe6dcf",
       # Bootstrap Node Settings
@@ -62,6 +63,18 @@ services:
   #
   # Commands
   #
+  init:
+    profiles: [command]
+    build: ./images/ethereum
+    networks:
+      ethereum:
+    volumes:
+      - ./files:/root/files
+      - ./.tmp:/root/.tmp
+    environment:
+      FILE: ./files/shared/genesis.json
+    working_dir: /root
+    command: /opt/scripts/setup.sh .tmp/node01 .tmp/node02
 
   create-genesis-json:
     profiles: [command]

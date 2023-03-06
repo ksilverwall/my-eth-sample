@@ -6,7 +6,7 @@ Sample to create private block chain
 ### STEP 1: Setup Data directory
 
 ```
-sh setup.sh
+docker-compose run --rm init
 ```
 
 ### STEP 2: Boot Services in Container
