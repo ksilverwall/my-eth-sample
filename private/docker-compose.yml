@@ -28,6 +28,7 @@ services:
 
       "--datadir", ".tmp/node01",
       "--nodekey", "./files/node01/nodekey",
+      "--keystore", "./files/node01/keystore",
       # PoA signer
       "--unlock", "0x6ce0ba981dd9b3bc259bbd868be14f957dbe6dcf",
       "--password", "./files/node01/password_6ce0ba981dd9b3bc259bbd868be14f957dbe6dcf.txt",
@@ -52,6 +53,7 @@ services:
     command: [
       "--datadir", ".tmp/node02",
       "--nodekey", "./files/node02/nodekey",
+      "--keystore", "./files/node02/keystore",
       # Member Node Settings
       "--bootnodes", "${NODE01_ID:?}",
     ]
