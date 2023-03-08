@@ -82,6 +82,27 @@ services:
     working_dir: /root
     entrypoint: geth
     command: attach .tmp/node01/geth.ipc
+
+  deploy-contract:
+    profiles: [command]
+    build: ./images/deploy-contract
+    networks:
+      ethereum:
+    volumes:
+      - ./app/request/:/work
+      - ./app/contract/output/:/input/contract
+      - ./files/node01/:/input/password
+      - .tmp/file:/output/file
+    environment:
+      ETH_URL: "http://${NODE01_IP:?}:8545"
+    working_dir: /work
+    command: [
+      "--account", "6ce0ba981dd9b3bc259bbd868be14f957dbe6dcf",
+      "--password", "/input/password/password_6ce0ba981dd9b3bc259bbd868be14f957dbe6dcf.txt",
+      "--abi", "/input/contract/SingleNumRegister.abi",
+      "--bin", "/input/contract/SingleNumRegister.bin",
+      "--out", "/output/file/outfile.txt"
+    ]
  
 networks:
   ethereum:
