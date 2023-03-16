@@ -45,47 +45,8 @@ const sendEth = async (web3, fromAddress, toAddress) => {
   console.log("Transaction hash:", receipt.transactionHash);
 };
 
-const registerContract = async (web3, fromAddress) => {
-  const abi = JSON.parse(
-    fs.readFileSync("../contract/output/SingleNumRegister.abi", "utf8")
-  );
-
-  const bin = fs
-    .readFileSync("../contract/output/SingleNumRegister.bin", "utf8")
-    .trim();
-
-  const password = fs
-    .readFileSync(
-      "../../files/node01/password_6ce0ba981dd9b3bc259bbd868be14f957dbe6dcf.txt",
-      "utf8"
-    )
-    .trim();
-
-  const unlock = await web3.eth.personal.unlockAccount(
-    fromAddress,
-    password,
-    30
-  );
-  if (!unlock) {
-    throw new Error("Failed to unlock account.");
-  }
-
-  const contract = new web3.eth.Contract(abi);
-  const tx = await contract.deploy({ data: "0x" + bin });
-
-  const deployedContract = await tx.send({
-    from: fromAddress,
-    gasPrice: "1",
-    gas: 1000000000,
-  });
-
-  console.log(deployedContract.options.address);
-};
-
-const executeContract = async (web3, fromAddress, contractAddress) => {
-  const abiJson = fs
-    .readFileSync("../contract/output/SingleNumRegister.abi", "utf8")
-    .trim();
+const executeContract = async (web3, fromAddress, contractAddress, abiFile) => {
+  const abiJson = fs.readFileSync(abiFile, "utf8").trim();
   const abi = JSON.parse(abiJson);
 
   const contract = new web3.eth.Contract(abi, contractAddress);
@@ -103,12 +64,18 @@ const executeContract = async (web3, fromAddress, contractAddress) => {
 const main = async (web3) => {
   const argv = yargs(hideBin(process.argv))
     .command("contract", "send eth", (yargs) =>
-      yargs.option("contract", {
-        alias: "c",
-        description: "Contract Account",
-        type: "string",
-        demandOption: true,
-      })
+      yargs
+        .option("contract", {
+          alias: "c",
+          description: "Contract Account",
+          type: "string",
+          demandOption: true,
+        })
+        .option("abi", {
+          description: "ABI File Path",
+          type: "string",
+          demandOption: true,
+        })
     )
     .parse();
 
@@ -122,11 +89,13 @@ const main = async (web3) => {
     case "send":
       await sendEth(web3, fromAddress, toAddress);
       break;
-    case "register":
-      await registerContract(web3, fromAddress);
-      break;
     case "contract":
-      await executeContract(web3, fromAddress, argv.contract);
+      await executeContract(
+        web3,
+        fromAddress,
+        argv.contract,
+        args.abi,
+      );
       break;
   }
 };

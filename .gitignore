@@ -1,4 +1,5 @@
 /.container
 /.ethereum
 /.tmp
+/solidity/output
 node_modules

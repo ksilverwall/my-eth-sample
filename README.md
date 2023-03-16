@@ -30,6 +30,5 @@ eth.sendTransaction({from: '0x6ce0ba981dd9b3bc259bbd868be14f957dbe6dcf', to: '0x
 
 
 ```
-cd app/contract
-solc --abi --bin src/SingleNumRegister.sol -o output
+solc --abi --bin solidity/src/SingleNumRegister.sol -o output
 ```

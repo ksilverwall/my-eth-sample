@@ -90,7 +90,7 @@ services:
       ethereum:
     volumes:
       - ./app/request/:/work
-      - ./app/contract/output/:/input/contract
+      - ./solidity/:/solidity
       - ./files/node01/:/input/password
       - .tmp/file:/output/file
     environment:
@@ -99,8 +99,8 @@ services:
     command: [
       "--account", "6ce0ba981dd9b3bc259bbd868be14f957dbe6dcf",
       "--password", "/input/password/password_6ce0ba981dd9b3bc259bbd868be14f957dbe6dcf.txt",
-      "--abi", "/input/contract/SingleNumRegister.abi",
-      "--bin", "/input/contract/SingleNumRegister.bin",
+      "--abi", "/solidity/output/SingleNumRegister.abi",
+      "--bin", "/solidity/output/SingleNumRegister.bin",
       "--out", "/output/file/outfile.txt"
     ]
  
